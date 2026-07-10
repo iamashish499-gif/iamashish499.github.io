@@ -6,7 +6,7 @@
 <title>Ashish Chaudhary — Business Lecturer &amp; Finance Professional</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#20241f;
@@ -14,33 +14,56 @@
     --paper-2:#f2eee4;
     --ledger:#7a2e27;
     --ledger-soft:#a7564c;
+    --gold:#9c7a3c;
     --line:#c9c1ad;
     --muted:#5b5748;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
   body{
     background:var(--paper);
     color:var(--ink);
     font-family:'Inter',sans-serif;
     line-height:1.6;
+    overflow-x:hidden;
   }
   a{color:inherit;}
-  .wrap{max-width:840px; margin:0 auto; padding:0 28px;}
+  .wrap{max-width:840px; margin:0 auto; padding:0 28px; position:relative;}
 
-  /* Ledger rule background on sections */
-  .ruled{
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 37px,
-      var(--line) 37px,
-      var(--line) 38px
-    );
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.is-visible{opacity:1; transform:translateY(0);}
+
+  /* ---------- Ticker bar ---------- */
+  .ticker-bar{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.06em;
+    overflow:hidden;
+    white-space:nowrap;
+    padding:8px 0;
+  }
+  .ticker-track{
+    display:inline-block;
+    padding-left:100%;
+    animation:ticker 32s linear infinite;
+  }
+  .ticker-track span{margin-right:48px; color:var(--gold);}
+  @keyframes ticker{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-100%);}
   }
 
+  /* ---------- Header / Hero ---------- */
   header{
-    padding:90px 0 60px;
-    border-bottom:1px solid var(--line);
+    padding:80px 0 40px;
+    position:relative;
   }
   .eyebrow{
     font-family:'IBM Plex Mono', monospace;
@@ -53,7 +76,7 @@
   h1{
     font-family:'Fraunces', serif;
     font-weight:600;
-    font-size:clamp(38px, 6vw, 62px);
+    font-size:clamp(38px, 7vw, 64px);
     line-height:1.05;
     letter-spacing:-0.01em;
   }
@@ -74,10 +97,38 @@
   .contact-row a{
     border-bottom:1px solid var(--ledger-soft);
     padding-bottom:2px;
+    transition:color .2s;
   }
   .contact-row a:hover{color:var(--ledger);}
 
-  section{padding:56px 0;}
+  /* Animated growth-line chart in hero */
+  .chart-wrap{
+    margin-top:48px;
+    height:120px;
+    position:relative;
+  }
+  .chart-wrap svg{width:100%; height:100%; overflow:visible;}
+  .chart-line{
+    fill:none;
+    stroke:var(--ledger);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+    animation:draw 2.4s cubic-bezier(.4,0,.2,1) .3s forwards;
+  }
+  .chart-fill{
+    opacity:0;
+    animation:fadein 1.2s ease 1.8s forwards;
+  }
+  .chart-dot{
+    opacity:0;
+    animation:fadein .4s ease 2.5s forwards;
+  }
+  @keyframes draw{ to{stroke-dashoffset:0;} }
+  @keyframes fadein{ to{opacity:1;} }
+
+  section{padding:50px 0; position:relative;}
   section + section{border-top:1px solid var(--line);}
 
   .entry-num{
@@ -99,6 +150,7 @@
     gap:20px;
     padding:22px 0;
     border-bottom:1px dashed var(--line);
+    position:relative;
   }
   .item:last-child{border-bottom:none;}
   .item-date{
@@ -111,7 +163,19 @@
     font-family:'Fraunces', serif;
     font-weight:500;
     font-size:19px;
+    position:relative;
+    display:inline-block;
   }
+  .item-title::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:-3px;
+    width:0%;
+    height:2px;
+    background:var(--ledger);
+    transition:width .35s ease;
+  }
+  .item:hover .item-title::after{width:100%;}
   .item-org{
     color:var(--ledger);
     font-size:14px;
@@ -123,32 +187,23 @@
     color:var(--muted);
   }
 
-  .about-text{
-    font-size:17px;
-    max-width:600px;
-  }
+  .about-text{font-size:17px; max-width:600px;}
   .about-text p + p{margin-top:16px;}
 
-  .pub-grid{
-    display:grid;
-    gap:18px;
-  }
+  .pub-grid{display:grid; gap:18px;}
   .pub{
     background:var(--paper-2);
     border-left:3px solid var(--ledger);
     padding:18px 22px;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
-  .pub-title{
-    font-family:'Fraunces', serif;
-    font-size:17px;
-    font-weight:500;
+  .pub:hover{
+    transform:translateX(6px);
+    box-shadow:0 6px 20px rgba(32,36,31,0.08);
+    border-color:var(--gold);
   }
-  .pub-meta{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:var(--muted);
-    margin-top:6px;
-  }
+  .pub-title{font-family:'Fraunces', serif; font-size:17px; font-weight:500;}
+  .pub-meta{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--muted); margin-top:6px;}
 
   .skills-grid{
     display:grid;
@@ -164,7 +219,15 @@
     margin-bottom:10px;
   }
   .skill-cat ul{list-style:none; font-size:14px; color:var(--muted);}
-  .skill-cat li{padding:3px 0;}
+  .skill-cat li{
+    padding:3px 0;
+    position:relative;
+    padding-left:14px;
+  }
+  .skill-cat li::before{
+    content:'—';
+    position:absolute; left:0; color:var(--gold);
+  }
 
   footer{
     padding:50px 0 70px;
@@ -176,24 +239,50 @@
 
   @media (max-width:560px){
     .item{grid-template-columns:1fr; gap:6px;}
-    header{padding:60px 0 40px;}
+    header{padding:56px 0 30px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    .chart-line, .chart-fill, .chart-dot{animation:none; opacity:1; stroke-dashoffset:0;}
+    .ticker-track{animation:none;}
   }
 </style>
 </head>
 <body>
 
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span>BUSINESS LECTURER</span><span>FINANCE &amp; CREDIT ANALYSIS</span><span>RELATIONSHIP BANKING</span><span>PUBLISHED AUTHOR</span><span>MSc INTERNATIONAL BUSINESS MANAGEMENT</span><span>BUSINESS LECTURER</span><span>FINANCE &amp; CREDIT ANALYSIS</span><span>RELATIONSHIP BANKING</span><span>PUBLISHED AUTHOR</span><span>MSc INTERNATIONAL BUSINESS MANAGEMENT</span>
+  </div>
+</div>
+
 <header class="wrap">
-  <div class="eyebrow">Portfolio · Est. 2026</div>
-  <h1>Ashish Chaudhary</h1>
-  <p class="role-line">Business Lecturer, finance professional, and author — moving between the banking floor, the classroom, and the page.</p>
-  <div class="contact-row">
+  <div class="eyebrow reveal">Portfolio · Est. 2026</div>
+  <h1 class="reveal">Ashish Chaudhary</h1>
+  <p class="role-line reveal">Business Lecturer, finance professional, and author — moving between the banking floor, the classroom, and the page.</p>
+  <div class="contact-row reveal">
     <a href="mailto:youremail@example.com">youremail@example.com</a>
     <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a>
     <span style="color:var(--muted)">London, UK</span>
   </div>
+
+  <div class="chart-wrap reveal">
+    <svg viewBox="0 0 800 120" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="fillgrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7a2e27" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#7a2e27" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="chart-fill" d="M0,95 L60,88 L140,92 L220,70 L300,78 L380,55 L460,62 L540,38 L620,44 L700,20 L800,26 L800,120 L0,120 Z" fill="url(#fillgrad)"/>
+      <path class="chart-line" d="M0,95 L60,88 L140,92 L220,70 L300,78 L380,55 L460,62 L540,38 L620,44 L700,20 L800,26"/>
+      <circle class="chart-dot" cx="800" cy="26" r="5" fill="#7a2e27"/>
+    </svg>
+  </div>
 </header>
 
-<section class="wrap">
+<section class="wrap reveal">
   <div class="entry-num">01 — About</div>
   <h2>Profile</h2>
   <div class="about-text">
@@ -202,7 +291,7 @@
   </div>
 </section>
 
-<section class="wrap">
+<section class="wrap reveal">
   <div class="entry-num">02 — Experience</div>
   <h2>Positions Held</h2>
 
@@ -243,7 +332,7 @@
   </div>
 </section>
 
-<section class="wrap">
+<section class="wrap reveal">
   <div class="entry-num">03 — Education</div>
   <h2>Academic Record</h2>
 
@@ -264,7 +353,7 @@
   </div>
 </section>
 
-<section class="wrap">
+<section class="wrap reveal">
   <div class="entry-num">04 — Publications</div>
   <h2>Books on Amazon KDP</h2>
   <div class="pub-grid">
@@ -283,7 +372,7 @@
   </div>
 </section>
 
-<section class="wrap">
+<section class="wrap reveal">
   <div class="entry-num">05 — Skills</div>
   <h2>Areas of Practice</h2>
   <div class="skills-grid">
@@ -317,6 +406,19 @@
 <footer>
   © 2026 Ashish Chaudhary — Built and maintained independently.
 </footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
